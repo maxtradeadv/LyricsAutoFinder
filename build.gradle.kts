@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("com.android.application") version "8.7.3"
+    id("org.jetbrains.kotlin.android") version "2.0.21"
 }
 
 android {
@@ -40,5 +40,5 @@ android {
 }
 
 dependencies {
-    // Intentionally framework-only: no AndroidX runtime components.
+    // Framework-only: no AndroidX runtime components.
 }
