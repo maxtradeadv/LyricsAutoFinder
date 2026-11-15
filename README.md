@@ -1,42 +1,39 @@
 # Lyrics Auto Finder — Android 8.1 compatibility build
 
-This is a compatibility build configuration for the supplied Lyrics Auto Finder source.
+A lightweight Android app that reads the active music player's MediaSession metadata, looks up lyrics from LRCLIB, and displays synchronized lyrics when available.
 
-## Target
-- Android 8.1 / API 27
-- `minSdk = 27`
-- `targetSdk = 28`
-- `compileSdk = 33`
-- Java bytecode target 1.8
-- Gradle 7.5 / Android Gradle Plugin 7.4.2 / Kotlin plugin 1.8.22
-- Debug APK signed with APK Signature Scheme v1 and v2
-- No AndroidX dependencies; the app uses Android framework APIs only.
+## Android compatibility
+- Minimum Android: 8.1 (API 27)
+- Target SDK: 28
+- Compile SDK: 33
+- Java/Kotlin bytecode target: 1.8
+- Android Gradle Plugin: 8.7.3
+- Kotlin Gradle Plugin: 2.0.21
+- Gradle wrapper: 8.9
+- Debug APK signing: APK Signature Scheme v1 and v2
+- No AndroidX runtime dependencies
 
-## Build on macOS
-1. Install Android SDK Platform 33 and Build Tools (Android Studio > SDK Manager).
-2. Use JDK 11 or newer (JDK 11 is sufficient for this toolchain).
-3. Open this folder in Android Studio and wait for Gradle Sync.
-4. Select Build > Clean Project.
-5. Select Build > Build Bundle(s) / APK(s) > Build APK(s).
+## Build on Windows
+1. Install Android Studio and Android SDK Platform 33 using SDK Manager.
+2. Open the repository root folder in Android Studio.
+3. Set **Gradle JDK** to Android Studio's bundled JDK 17 or newer (JDK 21 is suitable).
+4. Allow Gradle Sync to finish.
+5. Select **Build > Clean Project**, then **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
 
-Output:
-`app/build/outputs/apk/debug/app-debug.apk`
+The project is a single-module Android application with its Gradle build file at the repository root.
 
-## Install/test
-On the Android 8.1 emulator:
-```sh
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+## APK output
+`build/outputs/apk/debug/app-debug.apk`
+
+Install using ADB:
+```powershell
+adb install -r build/outputs/apk/debug/app-debug.apk
 ```
 
-Check package metadata:
-```sh
-$ANDROID_HOME/build-tools/33.0.2/aapt dump badging app/build/outputs/apk/debug/app-debug.apk
-```
+## How lyrics are detected
+The app reads the active player's Android MediaSession metadata through a notification listener. The player must publish track metadata. The app does not identify songs by recording or listening to raw audio.
 
-## What this changes
-Only the build toolchain and bytecode target are downgraded to a more legacy-friendly toolchain. App logic, notification listener, LRCLIB lookup, and Android 8.1 minimum remain unchanged. Manifest retains `android:extractNativeLibs="true"` and the notification listener service.
+Lyrics are retrieved from LRCLIB over the internet. Synchronized highlighting depends on synchronized lyrics being available for the track.
 
-## Important limitations
-- This is source code, not a prebuilt APK. Build it on the Mac to produce the APK.
-- This does not prove or guarantee acceptance by the YT9217C/HW8227L vendor package installer. If it still reports “Problem parsing the package”, capture the exact installer error and test the APK transfer path/signature.
-- Lyrics are fetched from LRCLIB over the internet. The app reads Android MediaSession metadata; it does not identify songs by listening to raw audio. The music player must publish media metadata.
+## Android 8.1 head-unit note
+The project targets API 27+ and is configured for legacy APK v1/v2 signing. This configuration does not guarantee that every vendor head-unit package installer will accept the APK. Test the built APK on the target device.
